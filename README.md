@@ -53,8 +53,10 @@ See [docs/registers.md](docs/registers.md) for the full register list and the pr
 
 ## Requirements
 
-- An eBUS adapter with an *enhanced* TCP port, e.g. the esp-eBus adapter from
-  [danielkucera/esp-ebus](https://github.com/danielkucera/esp-ebus) (port 3335 = enhanced, 3334 = listen only).
+- An eBUS adapter with an *enhanced* TCP port, e.g. Daniel Kučera's esp-eBus adapter
+  ([danielkucera/esp-ebus](https://github.com/danielkucera/esp-ebus); port 3335 = enhanced, 3334 = listen only).
+  This config was developed with that adapter, which you can buy here:
+  **[eBus to WiFi adapter (Elecrow)](https://tidd.ly/4ejJGGw)** *(affiliate link)*.
 - Home Assistant with an MQTT broker (e.g. the Mosquitto add-on) and an **ebusd add-on**
   (tested with ebusd 26.1).
 - The **File editor** add-on (or any other way to put a file in `/share`).
