@@ -1,0 +1,34 @@
+# type (r[1-9];w;u),circuit,name,comment,QQ,ZZ,PBSB,ID,field,part (m/s),datatypes/templates,divider/values,unit,comment
+# Ariston HS Premium 24 EU2 (BridgeNet) - ebusd config v3.2. READ ONLY: no "w" lines, nothing is written to the boiler.
+# 'u' lines: passive broadcasts from the boiler (37 -> FE). 2010 = live state (~5-25 s), 2020 = settings (on change + every 30 min).
+# Passive lines are aligned to real telegrams: every byte of the broadcast is covered (named field or IGN).
+u,boiler,status,Boiler state,37,fe,2010,c04b,boiler_status,,UCH,1=standby;2=heating;3=dhw;4=dhw_tank;5=circulating;18=plate_exchanger;23=manual_test;24=comfort;31=deaeration;36=calibration;51=low_water_pressure;52=no_flame;65=rebooting,,Boiler state,ign1,,IGN:3,,,,ta_contact,,UCH,0=off;1=on,,Room thermostat contact (TA1),ign2,,IGN:9,,,
+u,boiler,heat_request,Heat request zone 1,37,fe,2010,0191,z1,,UCH,0=off;1=on,,Heat request zone 1,ign1,,IGN:13,,,
+u,boiler,flow_setpoints,Boiler flow setpoint (computed),37,fe,2010,6047,boiler,,SIN,10,°C,Boiler flow setpoint (computed),ign1,,IGN:3,,,,z1,,SIN,10,°C,Zone 1 flow setpoint,ign2,,IGN:6,,,
+u,boiler,heating_status,Heating enabled (winter mode),37,fe,2020,0120,heating,,UCH,0=off;1=on,,Heating enabled (winter mode),ign1,,IGN:6,,,
+u,boiler,dhw_status,DHW enabled,37,fe,2020,0220,dhw,,UCH,0=off;1=on,,DHW enabled,ign1,,IGN:6,,,
+u,boiler,dhw_setpoint,DHW comfort setpoint,37,fe,2020,6126,comfort,,SIN,10,°C,DHW comfort setpoint,ign1,,IGN:8,,,
+u,boiler,dhw_comfort_mode,DHW comfort mode,37,fe,2020,712b,ign1,,IGN:4,,,,mode,,UCH,0=off;1=timed;2=always_on,,DHW comfort mode,ign2,,IGN:3,,,
+u,boiler,z1_heat_setpoint,Zone 1 flow setpoint,37,fe,2020,6571,setpoint,,SIN,10,°C,Zone 1 flow setpoint,ign1,,IGN:8,,,
+u,boiler,z1_flow_setpoint_limits,Zone 1 flow temperature limits,37,fe,2020,6071,max,,SIN,10,°C,Zone 1 flow temperature limits,ign1,,IGN:2,,,,min,,SIN,10,°C,,ign2,,IGN:4,,,
+u,boiler,temp_settings,Antifreeze and zone 1 day temperature,37,fe,2020,6426,antifreeze,,SIN,10,°C,Antifreeze and zone 1 day temperature,ign1,,IGN:5,,,,z1_day,,SIN,10,°C,
+u,boiler,z1_night_temp,Zone 1 night temperature,37,fe,2020,6371,night,,SIN,10,°C,Zone 1 night temperature,ign1,,IGN:7,,,
+u,boiler,z1_thermoreg_mode,Zone 1 thermoregulation (0=fixed temperature),37,fe,2020,6c71,ign1,,IGN:4,,,,mode,,UCH,,,Zone 1 thermoregulation (0=fixed temperature),ign2,,IGN:3,,,
+# 'r' lines: active reads 31 -> 3c, PBSB 2000, payload 02 <ID>; reply 01 <value>. Value size by 1st ID byte:
+# 00-1f/a0-bf/c0-df = 1 byte, 20-3f/40-5f/60-7f = 2 bytes. rN = poll priority (lower = more often).
+r1,boiler,flow_temp,Flow temperature,,3c,2000,6810,ign,s,IGN:1,,,,flow_temp,s,SIN,10,°C,
+r1,boiler,return_temp,Return temperature,,3c,2000,6910,ign,s,IGN:1,,,,return_temp,s,SIN,10,°C,
+r1,boiler,flame,Flame,,3c,2000,0e11,ign,s,IGN:1,,,,flame,s,UCH,0=off;1=on,,
+r1,boiler,burner_power,Burner power (0 when off),,3c,2000,6847,ign,s,IGN:1,,,,burner_power,s,SIN,10,kW,
+r1,boiler,fan_speed,Fan speed,,3c,2000,4013,ign,s,IGN:1,,,,fan_speed,s,UIN,,rpm,
+r1,boiler,dhw_flow,DHW flow (0 when no draw; scale unconfirmed),,3c,2000,61a1,ign,s,IGN:1,,,,dhw_flow,s,SIN,10,,
+r2,boiler,pump_modulation,Circulation pump modulation,,3c,2000,c300,ign,s,IGN:1,,,,pump_modulation,s,UCH,,%,
+r2,boiler,burner_modulation,Burner modulation (about 2 when off),,3c,2000,c314,ign,s,IGN:1,,,,burner_modulation,s,UCH,,%,
+r2,boiler,burner_request,Burner demand (heating or DHW),,3c,2000,c000,ign,s,IGN:1,,,,burner_request,s,UCH,0=idle;1=state_1;2=active;3=state_3,,
+r9,boiler,hours_ch,Burner hours in heating,,3c,2000,4bd1,ign,s,IGN:1,,,,hours_ch,s,UIN,,h,
+r9,boiler,hours_dhw,Burner hours in DHW,,3c,2000,4cd1,ign,s,IGN:1,,,,hours_dhw,s,UIN,,h,
+r9,boiler,ignitions,Number of ignitions,,3c,2000,42d8,ign,s,IGN:1,,,,ignitions,s,UIN,,,
+r9,boiler,pump_hours,Pump running hours,,3c,2000,42d2,ign,s,IGN:1,,,,pump_hours,s,UIN,,h,
+r9,boiler,diverter_cycles,Diverter valve cycles,,3c,2000,40d2,ign,s,IGN:1,,,,diverter_cycles,s,UIN,,,
+r9,boiler,circulation_cycles,Pump circulation cycles,,3c,2000,44d2,ign,s,IGN:1,,,,circulation_cycles,s,UIN,,,
+r9,boiler,fan_cycles,Fan cycles,,3c,2000,4cd2,ign,s,IGN:1,,,,fan_cycles,s,UIN,,,
