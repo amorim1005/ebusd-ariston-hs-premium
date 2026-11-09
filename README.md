@@ -113,10 +113,10 @@ on the boiler panel), and the counters take a few polling rounds.
   `status|temp|…|hours|…`. Without this override, entities such as `burner_power`, `flame` or `heat_request`
   never show up.
 - `--acquiretimeout=100 --latency=200 --receivetimeout=100`: Wi-Fi adapters add latency (the esp-ebus wiki
-  measures ~12–18 ms per symbol and ~90 ms to get the bus). With ebusd's LAN defaults, or even `--latency=50`,
-  up to 40 % of the polls failed here with `read timeout` / `SYN received` / `wrong symbol received`; with these
-  values (as recommended in the esp-ebus wiki, *Bridge mode → Timing over WiFi*) it dropped to **0 failures** on
-  the same adapter at -88 dBm. **`--receivetimeout` must not exceed 100** (ebusd 26.1 refuses to start with
+  measures ~12–18 ms per symbol and ~90 ms to get the bus). Measured here on the same adapter at about -88 dBm:
+  with `--latency=30` around 40 % of the polls failed (`read timeout` / `SYN received` / `wrong symbol received`),
+  with `--latency=50` about 1.4 %, and with these values (as recommended in the esp-ebus wiki,
+  *Bridge mode → Timing over WiFi*) about 0.4 % (1 failure in 227 polls), with no loss of poll rate. **`--receivetimeout` must not exceed 100** (ebusd 26.1 refuses to start with
   `invalid receivetimeout`).
 - `--pollinterval=10`: halves the bus load. Values still refresh roughly once a minute.
 - `--configpath` pointing to a local folder is mandatory when ebusd does not scan, otherwise it stops with
