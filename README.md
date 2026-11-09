@@ -83,7 +83,8 @@ The easiest place is `/share/ebusd`.
   ```
   --mqttjson
   --configpath=/share/ebusd
-  --latency=50
+  --acquiretimeout=100
+  --latency=200
   --receivetimeout=100
   --sendretries=3
   --pollinterval=10
@@ -111,9 +112,12 @@ on the boiler panel), and the counters take a few polling rounds.
 - `--mqttvar=filter-name=…`: the bundled `mqtt-hassio.cfg` only publishes messages whose *name* matches
   `status|temp|…|hours|…`. Without this override, entities such as `burner_power`, `flame` or `heat_request`
   never show up.
-- `--latency=50 --receivetimeout=100`: Wi-Fi adapters add latency; with the defaults many polls fail with
-  `wrong symbol received` / `SYN received`. **`--receivetimeout` must not exceed 100** (ebusd 26.1 refuses to
-  start with `invalid receivetimeout`).
+- `--acquiretimeout=100 --latency=200 --receivetimeout=100`: Wi-Fi adapters add latency (the esp-ebus wiki
+  measures ~12–18 ms per symbol and ~90 ms to get the bus). With ebusd's LAN defaults, or even `--latency=50`,
+  up to 40 % of the polls failed here with `read timeout` / `SYN received` / `wrong symbol received`; with these
+  values (as recommended in the esp-ebus wiki, *Bridge mode → Timing over WiFi*) it dropped to **0 failures** on
+  the same adapter at -88 dBm. **`--receivetimeout` must not exceed 100** (ebusd 26.1 refuses to start with
+  `invalid receivetimeout`).
 - `--pollinterval=10`: halves the bus load. Values still refresh roughly once a minute.
 - `--configpath` pointing to a local folder is mandatory when ebusd does not scan, otherwise it stops with
   `invalid configpath without scanconfig`.
@@ -127,7 +131,7 @@ on the boiler panel), and the counters take a few polling rounds.
 | `invalid receivetimeout` | use `--receivetimeout=100` or less |
 | Entities missing in HA | check the `filter-name` option; restart the add-on once all messages have been read |
 | Old entities stay "unavailable" | ebusd publishes MQTT discovery with *retain*: publish an empty retained payload to the entity's discovery topic (*MQTT → Configure → Publish a packet*), shown under *MQTT Info* |
-| Many `poll … failed` lines | Wi-Fi latency: improve the adapter's signal; the values still update on the next round |
+| Many `poll … failed` lines | Wi-Fi latency: use `--acquiretimeout=100 --latency=200`, and improve the adapter's signal if possible |
 
 ## Multiple zones
 
